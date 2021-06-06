@@ -1,0 +1,9 @@
+.post-container {
+    height: fit-content;
+    flex-direction: column;
+    width: 350px;
+    padding: 20px;
+    background: green;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
