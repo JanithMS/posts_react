@@ -4,16 +4,16 @@ import Auth from "./Pages/Auth";
 import Home from "./Pages/Home";
 
 export default function Router() {
-    // const loggedIn = true;
+    const [userName, setUserName] = React.useState("User Name Not Found");
     return (
         <BrowserRouter>
           <div>
             <Switch>
               <Route path="/home">
-                <Home/>
+                <Home userName={userName}/>
               </Route>
               <Route path="/">
-                <Auth/>
+                <Auth setUserName={setUserName}/>
               </Route>
             </Switch>
             {/* {!loggedIn && 

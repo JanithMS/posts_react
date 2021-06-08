@@ -8,7 +8,8 @@ import { LoginComponent } from "../generated/graphql";
 
 interface Probs {
     isRegistered: boolean,
-    setIsRegistered: Function
+    setIsRegistered: Function,
+    setUserName: Function
 }
 
 interface RegisterFormValues {
@@ -18,7 +19,7 @@ interface RegisterFormValues {
 
 export default function Register(props: React.PropsWithChildren<Probs>) {
 
-    const {isRegistered, setIsRegistered} = props;
+    const {isRegistered, setIsRegistered, setUserName} = props;
 
     const [show, setShow] = React.useState(true)
     const handleClick = () => setShow(!show)
@@ -43,7 +44,7 @@ export default function Register(props: React.PropsWithChildren<Probs>) {
                                 user: values
                             },
                             });
-                            console.log(response);
+                            setUserName(response.data?.loginUser.username);
                             go("/home");
                     } catch (err) {
                         const errors: { [key: string]: string } = {};
@@ -65,7 +66,7 @@ export default function Register(props: React.PropsWithChildren<Probs>) {
                 >
                 {(props) => (
                 <Form>
-                    <Flex bg="green" rounded="6px" flexDir="column" alignItems="center" padding="10px">
+                    <Flex bg="#d1d1d1" rounded="6px" flexDir="column" alignItems="center" padding="10px" box-shadow=" 1px 3px 5px  rgba(0,0,0,0.1)">
                         <Heading mb="12px">LOG IN</Heading>
                         <Stack mb="10px">
                             <Field name="email">

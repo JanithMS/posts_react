@@ -30,7 +30,7 @@ export default function Posts(refresh: any) {
         {error && <div>{error.message}</div>}
         {data?.fetchAllPost?.length === 0 && <div>No Posts!</div>}
         {data &&
-          <Flex flexWrap="wrap" bg="red" justify="space-evenly">
+          <Flex flexWrap="wrap" justify="space-evenly">
             {data?.fetchAllPost?.map((_data: any) => <ViewPost post={_data.title} postID={_data._id} reFresh={reFresh} setReFresh={setReFresh}/>)}
           </Flex>
         }
