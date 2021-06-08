@@ -5,19 +5,27 @@ import { Flex } from "@chakra-ui/layout";
 import { useDisclosure } from "@chakra-ui/react";
 import EditPost from "./EditPost";
 import "./ViewPost.css";
+import { useDeletePostMutation } from "../generated/graphql";
 
-export default function ViewPost({post}: {post: string}) {
+export default function ViewPost({post, postID, reFresh, setReFresh}: {post: string, postID: number, reFresh: boolean, setReFresh: Function}) {
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const [deletePostMutation] = useDeletePostMutation({
+      variables: {
+         postID: parseFloat(postID.toString())
+      },
+    });
+    const handleClick = () => {
+        deletePostMutation();
+        setReFresh(!reFresh);
+    }
     return (
         <Flex className="post-container">
-            <Flex>{post}</Flex>
-            <Flex>The virus that causes COVID-19 is mainly transmitted through droplets generated when an infected person coughs, sneezes, or exhales. These droplets are too heavy to hang in the air, and quickly fall on floors or surfaces.
-You can be infected by breathing in the virus if you are within close proximity of someone who has COVID-19, or by touching a contaminated surface and then your eyes, nose or mouth.</Flex>
+            <Flex mb="10px">{post}</Flex>
             <Flex width="310px" justify="space-evenly">
                 <Button size="sm" onClick={onOpen}><EditIcon/></Button>
-                <Button size="sm"><DeleteIcon/></Button>
+                <Button size="sm" onClick={handleClick}><DeleteIcon/></Button>
             </Flex>
-            <EditPost isOpen={isOpen} onClose={onClose} post={post}/>
+            <EditPost isOpen={isOpen} onClose={onClose} post={post} postID={postID}/>
         </Flex>
     );
 }

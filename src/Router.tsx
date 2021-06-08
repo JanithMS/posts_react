@@ -1,6 +1,6 @@
 import React from "react";
 import {BrowserRouter, Route,Switch} from "react-router-dom";
-import SignINUP from "./Components/SignINUP";
+import Auth from "./Pages/Auth";
 import Home from "./Pages/Home";
 
 export default function Router() {
@@ -13,7 +13,7 @@ export default function Router() {
                 <Home/>
               </Route>
               <Route path="/">
-                <SignINUP/>
+                <Auth/>
               </Route>
             </Switch>
             {/* {!loggedIn && 

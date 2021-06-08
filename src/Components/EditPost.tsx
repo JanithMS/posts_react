@@ -1,21 +1,74 @@
 import React from "react";
-import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Textarea } from "@chakra-ui/react";
+import { Button, FormControl, FormErrorMessage, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Textarea } from "@chakra-ui/react";
+import { UpdatePostComponent } from "../generated/graphql";
+import { Field, Form, Formik } from "formik";
 
-export default function EditPost({isOpen, onClose, post}: {isOpen: boolean, onClose: ()=>void, post: string}) {
-    return (
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Modal Title</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Textarea value={post}/>
-            </ModalBody>
+interface UpdatePostFormValues {
+  title: string
+}
 
-            <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={onClose}>Save Changes</Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-    );
+
+export default function EditPost({isOpen, onClose, post, postID}: {isOpen: boolean, onClose: ()=>void, post: string, postID: number}) {
+
+  const initialValues: UpdatePostFormValues = {title: post}
+console.log(postID)
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+        <UpdatePostComponent>
+          {updatePost => (
+          <Formik
+            initialValues={initialValues}
+            onSubmit={async (values, actions) => {
+              try {
+                const response = await updatePost({
+                  variables: {
+                    postID: parseFloat(postID.toString()),
+                    post: values 
+                  }
+                })
+                console.log(response)
+                // setRefresh(!refresh)
+                onClose();
+              } catch (err) {
+                const errors: { [key: string]: string } = {};
+                err.graphQLErrors[0].validationErrors.forEach(
+                  (validationErr: any) => {
+                    Object.values(validationErr.constraints).forEach(
+                      (message: any) => {
+                        errors[validationErr.property] = message;
+                      }
+                    );
+                  }
+                );
+                actions.setErrors(errors);
+              }
+            }}
+          >
+            {(props) => (
+              <Form>
+                <Field name="title">
+                  {({ field, form } :{field: any, form: any}) => (
+                    <ModalContent>
+                      <ModalHeader>Edit Post</ModalHeader>
+                      <ModalCloseButton />
+                      <ModalBody>
+                        <FormControl isInvalid={form.errors.title && form.touched.title}>
+                          <Textarea {...field} name="title" id="title" placeholder="Enter New Post"/>
+                          <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                        </FormControl>
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button mt="10px" isFullWidth={true} isLoading={props.isSubmitting} type="submit">Save Changes</Button>
+                      </ModalFooter>
+                    </ModalContent>
+                  )}
+                </Field>
+              </Form>
+            )}
+          </Formik>
+          )}
+      </UpdatePostComponent>
+    </Modal>
+);
 }
