@@ -24,23 +24,11 @@ export default function Register(props: React.PropsWithChildren<Probs>) {
     const handleClick = () => setShow(!show)
 
     const history = useHistory()
-
     const go = async(path: string) => {
       history.replace(path)
     }
 
     const initialValues: RegisterFormValues = {email: "", password:""}
-
-    // const handleSubmit = (values: any, actions: any) => {
-    //     const [loginMutation, { data, loading, error }] = useLoginMutation({
-    //         variables: {
-    //            user: values
-    //         },
-    //       });
-    //       console.log({values, actions});
-    //       actions.setSubmitting(false);
-    //       alert(JSON.stringify(values))
-    // }
 
     return (
       <Flex height="90vh" alignItems="center" justifyContent="center">
@@ -59,21 +47,20 @@ export default function Register(props: React.PropsWithChildren<Probs>) {
                             go("/home");
                     } catch (err) {
                         const errors: { [key: string]: string } = {};
-                        err.graphQLErrors[0].validationErrors.forEach(
-                          (validationErr: any) => {
-                            Object.values(validationErr.constraints).forEach(
-                              (message: any) => {
-                                errors[validationErr.property] = message;
-                              }
+                        errors["message"] = err.graphQLErrors[0].message;
+                        if(err.graphQLErrors[0].validationErrors) {
+                            err.graphQLErrors[0].validationErrors.forEach(
+                            (validationErr: any) => {
+                                Object.values(validationErr.constraints).forEach(
+                                (message: any) => {
+                                    errors[validationErr.property] = message;
+                                }
+                                );
+                            }
                             );
-                          }
-                        );
+                        }
                         actions.setErrors(errors);
                       }
-                    // console.log({values, actions});
-                    // actions.setSubmitting(false);
-                    // alert(JSON.stringify(values));
-                    // actions.setErrors({email: "Invalid Email"})
                 }}
                 >
                 {(props) => (
@@ -100,7 +87,7 @@ export default function Register(props: React.PropsWithChildren<Probs>) {
                             </Field>
                             <Field name="password">
                             {({ field, form}: {field: any, form: any}) => (
-                                <FormControl isInvalid={form.errors.password && form.touched.password}  isRequired={true}>
+                                <FormControl isInvalid={form.errors.password && form.touched.password}  isRequired={true}> 
                                     <InputGroup>
                                         <InputLeftAddon children={<LockIcon/>} />
                                         <Input
@@ -117,6 +104,7 @@ export default function Register(props: React.PropsWithChildren<Probs>) {
                                         </InputRightElement>
                                     </InputGroup>
                                     <FormErrorMessage>{form.errors.password}</FormErrorMessage>
+                                    {form.errors.message &&<Flex justifyContent="center" fontSize="20px" color="red">{form.errors.message}</Flex>}
                                 </FormControl>
                                 )}
                             </Field>

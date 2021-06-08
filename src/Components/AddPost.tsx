@@ -3,6 +3,7 @@ import { Button, FormControl, FormErrorMessage, Modal, ModalBody, ModalCloseButt
 import { AddIcon } from "@chakra-ui/icons";
 import { AddPostComponent } from "../generated/graphql";
 import { Field, Form, Formik } from "formik";
+import { useHistory } from "react-router-dom";
 
 interface AddPostFormValues {
   title: string
@@ -11,6 +12,11 @@ interface AddPostFormValues {
 export default function AddPost({isOpen, onClose, refresh, setRefresh}: {isOpen: boolean, onClose: ()=>void, refresh: boolean, setRefresh: Function}) {
 
   const initialValues: AddPostFormValues = {title: ""}
+
+  const history = useHistory()
+  const go = async(path: string) => {
+    history.replace(path)
+  }
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -30,6 +36,7 @@ export default function AddPost({isOpen, onClose, refresh, setRefresh}: {isOpen:
                     setRefresh(!refresh)
                     onClose();
                   } catch (err) {
+                    if(err.graphQLErrors[0].message.includes("Login/Register to Continue")) go("/");
                     const errors: { [key: string]: string } = {};
                     err.graphQLErrors[0].validationErrors.forEach(
                       (validationErr: any) => {

@@ -2,6 +2,7 @@ import React from "react";
 import { Button, FormControl, FormErrorMessage, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Textarea } from "@chakra-ui/react";
 import { UpdatePostComponent } from "../generated/graphql";
 import { Field, Form, Formik } from "formik";
+import { useHistory } from "react-router-dom";
 
 interface UpdatePostFormValues {
   title: string
@@ -11,7 +12,12 @@ interface UpdatePostFormValues {
 export default function EditPost({isOpen, onClose, post, postID}: {isOpen: boolean, onClose: ()=>void, post: string, postID: number}) {
 
   const initialValues: UpdatePostFormValues = {title: post}
-console.log(postID)
+
+  const history = useHistory()
+  const go = async(path: string) => {
+    history.replace(path)
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -32,6 +38,7 @@ console.log(postID)
                 onClose();
               } catch (err) {
                 const errors: { [key: string]: string } = {};
+                if(err.graphQLErrors[0].message.includes("Login/Register to Continue")) go("/");
                 err.graphQLErrors[0].validationErrors.forEach(
                   (validationErr: any) => {
                     Object.values(validationErr.constraints).forEach(

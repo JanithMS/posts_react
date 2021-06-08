@@ -2,6 +2,7 @@ import React from "react";
 import { Flex } from "@chakra-ui/react";
 import ViewPost from "./ViewPost";
 import { useGetPostsQuery } from "../generated/graphql";
+import { useHistory } from "react-router";
 
 export default function Posts(refresh: any) {
 
@@ -16,7 +17,13 @@ export default function Posts(refresh: any) {
       refetch();
     },[refresh, reFresh, refetch])
 
-    // console.log(data?.fetchAllPost?.length)
+    const history = useHistory()
+    const go = async(path: string) => {
+      history.replace(path)
+    }
+
+    if(error?.message.includes("Login/Register to Continue")) go("/")
+    
     return (
       <div>
         {loading && <div>Loading...</div>}

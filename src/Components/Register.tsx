@@ -26,7 +26,6 @@ export default function Register(props: React.PropsWithChildren<Probs>) {
     const handleClick = () => setShow(!show)
 
     const history = useHistory()
-
     const go = async(path: string) => {
       history.replace(path)
     }
@@ -50,20 +49,21 @@ export default function Register(props: React.PropsWithChildren<Probs>) {
                             go("/home");
                         } catch (err) {
                             const errors: { [key: string]: string } = {};
-                            err.graphQLErrors[0].validationErrors.forEach(
-                              (validationErr: any) => {
-                                Object.values(validationErr.constraints).forEach(
-                                  (message: any) => {
-                                    errors[validationErr.property] = message;
-                                  }
+                            errors["message"] = err.graphQLErrors[0].message;
+                            if(errors.message.includes("duplicate key value violates unique constraint")) errors["message"] = "Email exits!"
+                            if(err.graphQLErrors[0].validationErrors) {
+                                err.graphQLErrors[0].validationErrors.forEach(
+                                (validationErr: any) => {
+                                    Object.values(validationErr.constraints).forEach(
+                                    (message: any) => {
+                                        errors[validationErr.property] = message;
+                                    }
+                                    );
+                                }
                                 );
-                              }
-                            );
+                            }
                             actions.setErrors(errors);
                           }
-                        // console.log({values, actions});
-                        // actions.setSubmitting(false);
-                        // alert(JSON.stringify(values))
                     }}
                     >
                     {(props) => (
@@ -123,6 +123,7 @@ export default function Register(props: React.PropsWithChildren<Probs>) {
                                             </InputRightElement>
                                         </InputGroup>
                                         <FormErrorMessage>{form.errors.password}</FormErrorMessage>
+                                        {form.errors.message &&<Flex justifyContent="center" fontSize="20px" color="red">{form.errors.message}</Flex>}
                                     </FormControl>
                                     )}
                                 </Field>
